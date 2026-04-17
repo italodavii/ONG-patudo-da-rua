@@ -1,0 +1,444 @@
+/* ============================================================
+    CARD DE PET
+   ============================================================ */
+
+.pet-card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: var(--transition);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+}
+
+.pet-card:hover {
+    transform: scale(1.01);
+    box-shadow: var(--shadow-premium);
+}
+
+.pet-image-container {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
+
+.pet-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.pet-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pet-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.pet-specs {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--primary-orange);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
+}
+
+
+.pet-desc {
+    min-height: 2.8em;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.pet-description, .modal-body p {
+    word-wrap: break-word;      
+    overflow-wrap: anywhere;    
+    line-height: 1.5;           
+    font-size: 0.95rem;         
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.card-actions {
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 10px;
+    padding: 15px; 
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.card-actions button {
+    display: flex;          
+    align-items: center;    
+    justify-content: center; 
+    gap: 8px;               
+    text-align: center;
+
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    padding: 8px 5px;
+    border-radius: var(--radius-pill);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-ler-mais {
+    background-color: #eee !important;
+    color: #444 !important;
+}
+
+.btn-ler-mais:hover {
+    background-color: #ddd !important;
+    transform: scale(1.03);
+}
+
+.btn-wpp-small { 
+    display: inline-flex;
+    background: var(--primary-orange); 
+    color: white !important;
+    border-radius: 50px; 
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: 0.3s ease;
+    box-shadow: 0 10px 30px rgba(225, 169, 74, 0.3);
+}
+
+.btn-wpp-small:hover {
+    transform: scale(1.03);
+    box-shadow: 0 15px 40px rgba(225, 169, 74, 0.4);
+}
+
+/* ============================================================
+    MODAL REFINADO
+   ============================================================ */
+.modal {
+    display: none; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    
+    display: none; 
+    align-items: center; 
+    justify-content: center;
+    padding: 15px; 
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 450px; 
+    height: auto; 
+    max-height: 90vh;
+    max-height: 70vh;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+}
+
+.modal-img-container {
+    width: 100%;
+    height: 250px; 
+    overflow: hidden;
+}
+
+.modal-info {
+    padding: 20px;
+}
+
+.modal-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    font-size: 1.8rem;
+    color: red;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.close-modal:hover {
+    background: rgba(212, 160, 23, 0.2);
+    color: red;
+}
+
+.modal-header-image {
+    width: 100%;
+    height: 45vh; 
+    max-height: 300px;
+    flex-shrink: 0; 
+}
+
+.modal-header-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    border-radius: 20px 20px 0 0; 
+}
+
+.modal-header-image img:hover {
+    transform: scale(1.02);
+}
+
+.modal-body {
+    padding: 20px 25px;
+    flex-grow: 1; 
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-orange); 
+}
+
+.pet-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.pet-meta {
+    font-size: 0.85rem;
+    color: var(--primary-orange);
+    margin-bottom: 15px;
+}
+
+.pet-description {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: auto; 
+    padding-bottom: 10px;
+}
+
+.btn-adotar-final {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--primary-orange);
+    color: #fff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-adotar-final:hover {
+    background-color: #b88a12;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(212, 160, 23, 0.3);
+}
+
+.btn-adotar-final:active {
+    transform: translateY(0);
+}
+
+
+
+@media (max-width: 999px) {
+    .pet-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 627px) {
+    .card-actions {
+        display: flex;
+        flex-direction: column; 
+        gap: 8px; 
+        width: 100%;
+    }
+
+    .pet-card {
+        padding: 10px; 
+        gap: 10px; 
+    }
+
+    .pet-info {
+        padding: 0 !important; 
+        width: 100%; 
+    }
+
+    .pet-info h3 {
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;  
+    }
+
+    .pet-specs {
+        font-size: 0.6rem !important;
+        color: var(--primary-orange) !important;
+    }
+
+    .pet-desc, .pet-description {
+        font-size: 0.8rem; 
+        line-height: 1.4 !important; 
+        margin-bottom: 10px !important;
+        
+        white-space: normal !important; 
+        word-wrap: break-word !important; 
+        overflow-wrap: anywhere !important; 
+    }
+
+    .modal-content {
+        width: 95% !important;  
+        margin: 10px auto;
+    }
+    
+    .modal-body {
+        padding: 15px !important; 
+    }
+
+    .modal-body h2 {
+        font-size: 1.5rem !important; 
+    }
+
+    .modal-header-image {
+        height: 35vh; 
+    }
+
+    .btn-conhecer, .btn-wpp-small {
+        width: 100% !important; 
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .pet-card {
+        padding: 0 !important;
+    }
+
+    .pet-card img {
+        object-fit: contain !important;
+        width: 100%;
+    }
+
+    .pet-info h3 {
+        font-size: 0.9rem;
+    }
+
+    .pet-specs {
+        font-size: 0.6rem !important;
+        letter-spacing: 0.5px;
+    }
+
+    .pet-desc {
+        font-size: 0.65rem !important;
+    }
+
+    .card-actions {
+        display: flex;
+        flex-direction: column; 
+        gap: 6px;
+        padding: 5px;
+    }
+
+    .btn-container {
+        gap: 6px !important;
+    }
+
+    .card-actions button, 
+    .btn-wpp-small {
+        font-size: 0.6rem !important;
+        padding: 4px 4px !important;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .pet-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 160px; 
+        padding: 0 10px 10px 10px !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .pet-specs {
+        font-size: 0.5rem !important;
+    }
+}
+
+
+

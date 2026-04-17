@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icon/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icon/favicon.png">
+    <title>Patudos da Rua | Conheça os Patudos</title>
+    <script src="components/components.js" defer></script>
+    <link rel="stylesheet" href="user.css">
+    <link rel="stylesheet" href="catalogo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <section class="catalogo-banner container">
+        <div class="banner-content">
+            <img src="assets/branding/banner-pets.png" alt="Patudos da Rua Banner" class="banner-img">
+        </div>
+    </section>
+
+    <main class="catalogo-wrapper">
+
+        <h2 id="topo-catalogo">Conheça os Patudos</h2>
+        <p class="subtitulo-sessao">Encontre o companheiro ideal que está à espera de um lar.</p>
+
+        <div class="filter-bar">
+            <button id="open-filters" class="btn-filter-toggle">
+                <i class="fas fa-filter"></i> 
+                <span>Filtrar Pets</span>
+            </button>
+            <div class="exibindo-status" id="status-filtro-mobile">
+                Exibindo: <strong>Todos</strong>
+            </div>
+        </div>
+
+        <div class="catalogo-container-horizontal">
+    
+            <header class="barra-filtros-topo">
+                <div class="filter-wrapper">
+                    
+                    <div class="filter-section">
+                        <h4>Espécie</h4>
+                        <div class="chips-group" data-group="especie">
+                            <button class="chip active" data-value="todos">Todas</button>
+                            <button class="chip" data-value="Cachorro">Cão</button>
+                            <button class="chip" data-value="Gato">Gato</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h4>Gênero</h4>
+                        <div class="chips-group" data-group="genero">
+                            <button class="chip active" data-value="todos">Todas</button>
+                            <button class="chip" data-value="Macho">Macho</button>
+                            <button class="chip" data-value="Fêmea">Fêmea</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h4>Idade</h4>
+                        <div class="chips-group" data-group="idade">
+                            <button class="chip active" data-value="todos">Todas</button>
+                            <button class="chip" data-value="Filhote">Filhote</button>
+                            <button class="chip" data-value="Adulto">Adulto</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h4>Ordem</h4>
+                        <div class="chips-group" data-group="ordem">
+                            <button class="chip active" data-value="novos">Novos</button>
+                            <button class="chip" data-value="antigos">Antigos</button>
+                        </div>
+                    </div>
+
+                    <button class="btn-aplicar-horizontal" id="aplicar-filtros">
+                        <i class="fas fa-sliders-h"></i> Filtrar
+                    </button>
+                </div>
+            </header>
+
+            <!-- Sidebar para Mobile (aparece ao clicar no botão) -->
+            <aside class="sidebar-filtros" id="sidebar-mobile">
+                <div class="filter-header">
+                    <h3><i class="fa-solid fa-filter"></i> Filtros</h3>
+                    <button class="close-sidebar" id="close-filters">&times;</button>
+                </div>
+
+                <div class="filter-content-mobile">
+                    <div class="filter-section">
+                        <h4>Espécie</h4>
+                        <div class="chips-group" data-group="especie">
+                            <button class="chip active" data-value="todos">Todas</button>
+                            <button class="chip" data-value="Cachorro">Cão</button>
+                            <button class="chip" data-value="Gato">Gato</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h4>Gênero</h4>
+                        <div class="chips-group" data-group="genero">
+                            <button class="chip active" data-value="todos">Todas</button>
+                            <button class="chip" data-value="Macho">Macho</button>
+                            <button class="chip" data-value="Fêmea">Fêmea</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h4>Idade</h4>
+                        <div class="chips-group" data-group="idade">
+                            <button class="chip active" data-value="todos">Todas</button>
+                            <button class="chip" data-value="Filhote">Filhote</button>
+                            <button class="chip" data-value="Adulto">Adulto</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h4>Ordem</h4>
+                        <div class="chips-group" data-group="ordem">
+                            <button class="chip active" data-value="novos">Novos</button>
+                            <button class="chip" data-value="antigos">Antigos</button>
+                        </div>
+                    </div>
+
+                    <button class="btn-aplicar-mobile" id="btn-aplicar-mobile">Aplicar Filtros</button>
+                </div>
+            </aside>
+
+            <!-- Fundo escuro -->
+            <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+            <section class="vitrine-pets">
+                <div id="catalog-loader" class="loading-catalogo">
+                    <i class="fas fa-paw"></i>
+                    <p>BUSCANDO PATUDOS...</p>
+                </div>
+                <div id="grid-pets" class="pet-grid-catalogo"></div>
+            </section>
+        </div>
+        <div class="pagination-container">
+        <div class="pagination-group">
+            <div id="numeros-paginas"></div>
+            
+            <div class="nav-buttons-container">
+                <button id="btn-anterior" class="btn-pag">
+                    <i class="fas fa-arrow-left"></i> Anterior
+                </button>
+                <button id="btn-proximo" class="btn-pag">
+                    Próximo <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div id="container-inicio"></div>
+        </div>
+    </main>
+
+    <div id="modal-pet" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            
+            <div class="modal-header-image">
+                <img src="" alt="modal-img">
+            </div>
+            
+            <div class="modal-body">
+                <h2 class="pet-name">Manin</h2>
+                <div class="pet-meta">Cachorro • Macho • Adulto</div>
+                
+                <div class="pet-description">
+                    <p>Manin é um doguinho super dócil e energético...</p> 
+                    </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-adotar-final">
+                        <span>Quero Adotar</span>
+                        <i class="fas fa-paw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox-pet" class="lightbox">
+        <button class="close-lightbox">&times;</button>
+        <img src="" alt="Foto em tamanho real" class="lightbox-img">
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="js/catalogo.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="assets/icon/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icon/favicon.png">
+    <title>Painel Admin | Patudos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+</head>
+<body class="admin-body">
+    <header class="admin-header">
+        <div class="header-container">
+            <div class="logo-area" onclick="location.reload()" style="cursor:pointer">
+                <img src="assets/branding/logo-sf.png" alt="Patudos da Rua">
+                <span>PAINEL ADMINISTRATIVO</span>
+            </div>
+            <nav class="admin-nav-links">
+                <a href="index.html" class="nav-link">← Ir para o Site</a>
+                <button id="btn-logout" class="btn-logout">Sair</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-dashboard" id="dashboard-home">
+        <div class="dashboard-container">
+            <div class="dashboard-text">
+                <h1>Painel de <br><span>Controle.</span></h1>
+                <p>Escolha uma das opções abaixo para gerenciar o conteúdo.</p>
+
+                <!-- Novos Contadores Integrados -->
+                <div class="dashboard-stats" style="display: flex; gap: 20px; margin-bottom: 80px;">
+                    <div class="stat-box">
+                        <h3 class="counter" data-target="disponiveis">0</h3>
+                        <span><i class="fas fa-paw"></i>Pets Ativos</span>
+                    </div>
+                    <div class="stat-box">
+                        <h3 class="counter" data-target="adotadosMes">0</h3>
+                        <span><i class="fas fa-heart"></i>Adotados/Mês</span>
+                    </div>
+                    <div class="stat-box">
+                        <h3 id="count-eventos">0</h3>
+                        <span><i class="fa-solid fa-calendar-check"></i>Eventos Ativos</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-actions">
+                    <button class="btn-dash" onclick="showTab('aba-pets')"><i class="fas fa-list-check"></i>Gerenciar Pets</button>
+                    <button class="btn-dash" onclick="showTab('aba-mural')"><i class="fas fa-bullhorn"></i>Mural de Eventos</button>
+                </div>
+            </div>
+            <div class="dashboard-visual">
+                <div class="circle-decoration"></div>
+            </div>
+        </div>
+    </main>
+
+    <main class="container">
+        <section id="aba-pets" class="tab-content">
+            <button class="btn-voltar" onclick="location.reload()">← Voltar ao Início</button>
+
+            <div class="admin-grid">
+                <form id="form-cadastrar-pet" class="admin-form-col">
+                    <h2 class="form-title">Dados do Novo Patudo</h2>
+
+                    <div class="input-group">
+                        <label for="pet-nome">Nome do Pet</label>
+                        <input type="text" id="pet-nome" placeholder="Ex: Luiz" required maxlength="30" autocomplete="off">
+                    </div>
+
+                    <div class="form-row-triple">
+                        <div class="input-group">
+                            <label>Espécie</label>
+                            <select id="pet-especie" required>
+                                <option value="" disabled selected>Selecionar Espécie</option>
+                                <option value="Cachorro">Cachorro</option>
+                                <option value="Gato">Gato</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Gênero</label>
+                            <select id="pet-genero" required>
+                                <option value="" disabled selected>Selecionar Gênero</option>
+                                <option value="Macho">Macho</option>
+                                <option value="Fêmea">Fêmea</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="pet-idade">Idade/Fase</label>
+                            <select id="pet-idade" required>
+                                <option value="" disabled selected>Selecionar Fase</option>
+                                <option value="Filhote">Filhote</option>
+                                <option value="Adulto">Adulto</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Descrição</label>
+                        <textarea id="pet-desc" rows="4" placeholder="Ex: Cachorro feliz" required></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="custom-file-upload">
+                            <input type="file" id="pet-foto" accept=".jpg, .jpeg, .png, .webp">
+                            <span>📸 Selecionar Foto</span>
+                        </label>
+                        
+                        <small style="color: #999; display: block; margin-top: 5px; text-align: center;">
+                            *Apenas formatos de imagem (Máx. 2MB)
+                        </small>
+
+                        <div id="crop-container" style="display:none; margin-top: 15px;">
+                            <img id="image-to-crop" style="display: block; max-width: 100%;">
+                            
+                            <div class="crop-controls" style="margin-top: 10px; text-align: center;">
+                                <button type="button" id="btn-zoom-in" class="btn-secondary">➕ Zoom</button>
+                                <button type="button" id="btn-zoom-out" class="btn-secondary">➖ Zoom</button>
+                                <button type="button" id="btn-reset-crop" class="btn-secondary">🔄 Resetar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="pet-foto-preview-container" class="foto-selecionada-view" style="display: none;">
+                        <span class="preview-label">Foto Selecionada:</span>
+                        <img id="form-img-preview" src="" alt="Miniatura">
+                        <button type="button" id="btn-remover-foto" class="btn-clean" onclick="limparPrevia('pet', true)">Remover foto ❌</button>                    </div>
+
+                    <button type="submit" class="btn-publicar">PUBLICAR NO SITE</button>
+                </form>
+
+                <aside class="preview-col">
+                    <h3 class="preview-title">Preview do Card</h3>
+                    <article class="pet-card-preview">
+                        <div class="card-img-wrapper">
+                            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" id="p-img" alt="Foto">
+                        </div>
+                        <div class="card-info">
+                            <h3 id="p-nome">Nome do Patudo</h3>
+                            <p class="pet-specs">
+                                <span id="p-especie">Espécie</span> • 
+                                <span id="p-genero">Gênero</span> • 
+                                <span id="p-idade">Idade/Porte</span>
+                            </p>
+                            <p class="pet-desc-preview" id="p-desc">A história aparecerá aqui...</p>
+                            <div class="card-footer">
+                                <span class="ler-mais">Ler mais...</span>
+                                <span class="badge-adotar">ADOTAR 🐾</span>
+                            </div>
+                        </div>
+                    </article>
+                </aside>
+            </div>
+
+            <div class="admin-list-container">
+                <h3>Pets Ativos no Site</h3>
+                <table class="admin-table">
+                    <tbody id="lista-pets-admin"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <main class="container">
+        <section id="aba-mural" class="tab-content" style="display: none;">
+            <button class="btn-voltar" onclick="location.reload()">← Voltar ao Início</button>
+            
+            <div class="admin-grid">
+                <form id="form-mural" class="admin-form-col">
+                    <h2 class="form-title">Novo Evento no Mural</h2>
+                    
+                    <div class="input-group">
+                        <label for="mural-titulo">Assunto</label>
+                        <input type="text" id="mural-titulo" name="title-event" placeholder="Ex.: Feixa de Adoção" required maxlength="30" autocomplete="off">
+                    </div>
+
+                    <div class="form-row-triple">
+                        <div class="input-group">
+                            <label for="mural-data">Data do Evento</label>
+                            <input type="date" id="mural-data" name="date" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="mural-hora">Hora do Evento</label>
+                            <input type="time" id="mural-hora" name="time" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="mural-endereco">Endereço do Evento (Privado)</label>
+                        <input type="text" id="mural-endereco" name="address" placeholder="Ex.: Rua das Palmeiras, 123 - Centro" required>
+                        <small style="color: #888; font-size: 0.75rem;">* Este endereço aparecerá apenas nos detalhes do evento.</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="mural-desc">Descrição</label>
+                        <textarea id="mural-desc" name="description" rows="5" placeholder="Informações sobre o evento." required></textarea>
+                    </div>
+                    
+                        
+
+                    <div class="admin-field">
+                        <label class="custom-file-upload">
+                            <input type="file" id="mural-foto" accept=".jpg, .jpeg, .png, .webp">
+                            <span>🖼️ Selecionar Arte do Evento</span>
+                        </label>
+                        <small style="color: #999; display: block; margin-top: 5px; text-align: center;">
+                            *Apenas formatos de imagem (Máx. 2MB)
+                        </small>
+
+                        <div id="crop-container-mural" style="display:none; margin-top: 15px;">
+                            <img id="image-to-crop-mural" style="display: block; max-width: 100%;">
+                            
+                            <div class="crop-controls" style="margin-top: 10px; text-align: center;">
+                                <button type="button" id="btn-zoom-in-mural" class="btn-secondary">➕</button>
+                                <button type="button" id="btn-zoom-out-mural" class="btn-secondary">➖</button>
+                                <button type="button" id="btn-reset-mural" class="btn-secondary">🔄</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="mural-foto-preview-container" style="display: none;">
+                        <span class="preview-label">Arte Selecionada:</span>
+                        <img id="form-mural-img-preview" src="" alt="Preview">
+                        <button type="button" class="btn-clean" onclick="limparPrevia('mural', true)">
+                            ✕ Remover Arte
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-publicar">ADICIONAR AO MURAL</button>
+                </form>
+
+                <aside class="preview-col">
+                    <h3 class="preview-title">Visualização no Site</h3>
+                    <div class="mural-card-limpo-container" style="display: flex; flex-direction: column; height: auto;">
+                        <img src="https://res.cloudinary.com/dvtqnwyjk/image/upload/v1776193371/logo_oenfes.jpg" id="p-mural-img" alt="Visualização do Banner" style="height: 200px; object-fit: cover;">
+                        
+                        <div style="padding: 15px; background: #fff; text-align: left; width: 100%;">
+                            <h4 id="p-mural-title" style="margin: 0; color: #333;">Título do Evento</h4>
+                            <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">
+                                <span id="p-mural-date">Data</span> • <span id="p-mural-time">Hora</span>
+                            </p>
+                            <p id="p-mural-description" style="font-size: 0.8rem; color: #777; line-height: 1.4;">A descrição aparecerá aqui...</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="admin-list-container">
+                <h3>Eventos Ativos no Mural</h3>
+                <div id="lista-mural-admin" class="mural-manage-grid"></div>
+            </div>
+
+        </section>
+    </main>
+
+    <div id="custom-confirm" class="modal-overlay">
+        <div class="modal-content">
+            <div id="modal-icon" class="modal-icon">⚠️</div>
+            <h3 id="modal-title">Aviso</h3>
+            <p id="confirm-message">Mensagem aqui...</p>
+            <div class="modal-buttons">
+                <button id="confirm-cancel" class="btn-modal-secondary">Cancelar</button>
+                <button id="confirm-ok" class="btn-modal-primary">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/admin-logic.js"></script>
+</body>
+</html>

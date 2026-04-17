@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icon/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icon/favicon.png">
+    <title>Login | Patudos da Rua</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css"> </head>
+
+<body class="body-login"> 
+    <div class="login-page-container">
+        
+        <div class="login-visual">
+            <div class="ong-shield-icon"></div>
+        </div>
+
+        <div class="login-content">
+            <div class="login-box">
+                <header class="login-header">
+                    <h2>Bem-vindo</h2>
+                    <p class="subtitle">Autenticação de Nível Administrativo</p>
+                </header>
+
+                <form id="form-login" autocomplete="off">
+                    <div class="login-field">
+                        <label for="email">E-mail Corporativo</label>
+                        <input type="email" id="email" placeholder="usuario@dominio.com" required maxlength="60" autocomplete="off" onkeypress="return /[a-z0-9@._-]/i.test(event.key)">
+                    </div>
+
+                    <div class="login-field">
+                        <label for="password">Senha de Acesso</label>
+                        <input type="password" id="password" placeholder="••••••••" required maxlength="20" autocomplete="off">
+                    </div>
+
+                    <div id="login-error" style="display:none;"></div>
+
+                    <button type="submit" id="btn-login" class="btn-login-submit">Sign In</button>
+                </form>
+
+                <p class="nota-seguranca">
+                    *Este é um sistema privado.<br>O acesso não autorizado é monitorado e proibido.
+                </p>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="js/login-page.js"></script>
+</body>
+</html>

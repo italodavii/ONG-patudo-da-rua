@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icon/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icon/favicon.png">
+    <title>Como Ajudar | Patudos da Rua</title>
+    <script src="components/components.js" defer></script>
+    <link rel="stylesheet" href="user.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="ajudar-page">
+        <section class="hero-ajudar">
+            <div class="container">
+                <h1>Como Ajudar</h1>
+                <p>Sua colaboração é o que nos permite continuar resgatando e transformando vidas em Joinville.</p>
+
+                <div class="scroll-down-container">
+                    <div class="chevron"></div>
+                    <div class="chevron"></div>
+                    <div class="chevron"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="opcoes-ajuda container">
+            <div id="voluntario" class="grid-ajuda">
+                
+                <div class="card-ajuda reveal">
+                    <div class="icon"><img src="assets/icon/pix-icon.png" alt="PIX"></div>
+                    <h3>Faça Doações</h3>
+                    <p>Contribua para custos de tratamento, castração e vacinação. <strong>Cada contribuição faz a diferença.</strong></p>
+                    <div class="pix-box">
+                        <span id="chave-pix">CNPJ: 24.312.441/0001-44</span>
+                        <button onclick="copiarPix()" class="btn-copiar">Copiar Chave <i class="far fa-copy"></i></button>
+                    </div>
+                    <p class="txt-secundario">Também aceitamos ração e itens essenciais de pet shop.</p>
+                </div>
+
+                <div class="card-ajuda reveal">
+                    <div class="icon"><img src="assets/icon/colete-icon.png" alt="Voluntário"></div>
+                    <h3>Seja um Voluntário</h3>
+                    <p>Dedique seu tempo apaixonado por animais nas nossas <strong>Feiras de Adoção</strong> e ajude a tornar novos lares possíveis.</p>
+                    <a href="https://wa.me/47989134439" target="_blank" class="btn-acao">Quero Participar</a>
+                </div>
+
+                <div class="card-ajuda reveal">
+                    <div class="icon"><img src="assets/icon/cachorro-icon.png" alt="Compartilhar"></div>
+                    <h3>Ajuda Digital</h3>
+                    <p>Acompanhe nossas histórias inspiradoras e <strong>compartilhe nossas postagens</strong> para que nossa voz chegue mais longe.</p>
+                    <div class="social-btns">
+                        <a href="#" class="btn-social">Instagram</a>
+                        <a href="#" class="btn-social">Facebook</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="banner-missao reveal">
+            <div class="container">
+                <div class="frase-impacto">
+                    <i class="fas fa-quote-left"></i>
+                    <p>Seja qual for a forma de apoio que você escolher, saiba que está fazendo uma diferença significativa na vida dos animais que cuidamos. <strong>Junte-se a nós na nossa missão de cuidar e proteger aqueles que não podem cuidar de si mesmos.</strong></p>
+                    <i class="fas fa-quote-right"></i>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        function copiarPix() {
+            const cnpj = "24312441000144";
+            navigator.clipboard.writeText(cnpj).then(() => {
+                alert("Chave PIX copiada com sucesso! 🐾");
+            });
+        }
+    </script>
+</body>
+</html>

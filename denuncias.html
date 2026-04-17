@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icon/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icon/favicon.png">
+    <title>Denúncias - Patudos da Rua</title>
+    <script src="components/components.js" defer></script>
+    <link rel="stylesheet" href="denuncia.css">
+    <link rel="stylesheet" href="user.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    
+    <div id="header-placeholder"></div>
+
+    <div class="sessao">
+        <div class="container">
+            <h1 class="titulo">Central de Denúncias</h1>
+            <p class="texto">
+                Maus-tratos é crime. Sua denúncia é a voz daqueles que não podem falar. 
+                Em Santa Catarina, o registro pode ser feito de forma online e segura.
+            </p>
+        </div>
+    </div>
+
+    <main class="principal">
+
+        <div class="emergency-banner">
+            <div class="emergency-content">
+                <i class="fa-solid fa-triangle-exclamation"></i><!--ICON ANIMADO DE ALERTA-->
+                <div>
+                    <h2 class="titulo-alerta">Flagrante agora?</h2>
+                    <p class="descricao-alerta">Não espere o registro online. Chame a Polícia Militar imediatamente.</p>
+                </div>
+            </div>
+            <div class="telefone">
+                Ligue 190
+            </div>
+        </div>
+
+        <section class="secao-espacamento">
+            <div class="cabecalho-secao">
+                <div class="linha"></div>
+                <h2 class="titulo-secao">Como denunciar corretamente</h2>
+            </div>
+            
+            <div class="grid-denuncia">
+                <div class="card">
+                    <div class="numero">1</div>
+                    <h3 class="card-titulo">Colha Provas</h3>
+                    <p class="card-texto">Tire fotos, faça vídeos e anote o endereço exato. Se houver testemunhas, anote o contato delas.</p>
+                </div>
+
+                <div class="card">
+                    <div class="numero">2</div>
+                    <h3 class="card-titulo">Relate os Fatos</h3>
+                    <p class="card-texto">Seja específico sobre o que está acontecendo (falta de comida, agressão, abandono ou exposição ao sol).</p>
+                </div>
+
+                <div class="card">
+                    <div class="numero">3</div>
+                    <h3 class="card-titulo">Registre o BO</h3>
+                    <p class="card-texto">Acesse o portal da Polícia Civil de SC para formalizar a denúncia de forma oficial.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Canal Principal: PCSC -->
+        <section class="secao-canais">
+    
+            <div class="card-pcsc">
+                <div class="conteudo">
+                    <img src="https://pc.sc.gov.br/wp-content/uploads/2021/04/logo-pcsc.png" class="logo-pcsc">
+
+                    <h2 class="titulo">Delegacia Virtual (PCSC)</h2>
+
+                    <p class="descricao">
+                        Este é o canal oficial para registrar crimes contra animais em SC. 
+                        A denúncia gera um número de protocolo oficial para investigação.
+                    </p>
+                </div>
+
+                <a href="https://delegaciavirtual.sc.gov.br/" target="_blank" class="botao">
+                    Fazer Denúncia Online <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+
+            <div class="card-canais">
+                <h2 class="titulo-canais">Outros Canais</h2>
+
+                <div class="lista">
+                    <div class="item">
+                        <div class="icone gold"><i class="fas fa-phone-alt"></i></div>
+                        <div>
+                            <h4>Disque Denúncia 181</h4>
+                            <p>Canal anônimo da Polícia Civil para informações sobre crimes.</p>
+                        </div>
+                    </div>
+
+                    <div class="item divisor">
+                        <div class="icone blue"><i class="fas fa-balance-scale"></i></div>
+                        <div>
+                            <h4>Ministério Público (MPSC)</h4>
+                            <p>Para denúncias de descaso continuado ou crimes ambientais graves.</p>
+                        </div>
+                    </div>
+
+                    <div class="item divisor">
+                        <div class="icone green"><i class="fas fa-leaf"></i></div>
+                        <div>
+                            <h4>IBAMA</h4>
+                            <p>Ligue 0800 061 8080 para denúncias envolvendo animais silvestres.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Guia Visual do que é Crime -->
+        <section class="secao-maus-tratos">
+            <h2 class="titulo-maus-tratos">O que é considerado maus-tratos?</h2>
+
+            <div class="grid-maus-tratos">
+                <div class="card-maus">
+                    <i class="fas fa-tint-slash icone-maus"></i>
+                    <p class="texto-maus">Privação de Alimento</p>
+                </div>
+
+                <div class="card-maus">
+                    <i class="fas fa-sun icone-maus"></i>
+                    <p class="texto-maus">Exposição ao Tempo</p>
+                </div>
+
+                <div class="card-maus">
+                    <i class="fas fa-chain icone-maus"></i>
+                    <p class="texto-maus">Acorrentamento</p>
+                </div>
+
+                <div class="card-maus">
+                    <i class="fas fa-ambulance icone-maus"></i>
+                    <p class="texto-maus">Falta de Cuidados Médicos</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-logo">
+            <i class="fas fa-paw"></i> Patudos da Rua
+        </div>
+
+        <div class="footer-copy">
+            © 2024 - Guia de Proteção Animal Santa Catarina
+        </div>
+    </footer>
+
+</body>
+</html>

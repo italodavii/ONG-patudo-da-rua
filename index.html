@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/icon/favicon.png">
+    <link rel="apple-touch-icon" href="assets/icon/favicon.png">
+    <title>Patudos da Rua | Adoção</title>
+    <script src="components/components.js" defer></script>
+    <link rel="stylesheet" href="user.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <main>
+        <section class="hero container">
+            <div class="hero-content">
+                <h1>Transforme uma vida,<br><strong>adote um amigo.</strong></h1>
+                <p>
+                    Desde 2015, a Patudos da Rua atua em Joinville resgatando e reabilitando animais para que encontrem o lar que sempre mereceram.
+
+                </p>
+                <section class="stats-section">
+                    <div class="stat-card">
+                        <h2 class="counter" data-target="totalAdotados">0</h2>
+                        <p>Vidas Salvas</p>
+                    </div>
+                    <div class="stat-card">
+                        <h2 class="counter" data-target="adotadosMes">0</h2>
+                        <p>Adotados este mês</p>
+                    </div>
+                    <div class="stat-card">
+                        <h2 class="counter" data-target="disponiveis">0</h2>
+                        <p>Esperando por você</p>
+                    </div>
+                </section>
+                <a href="#animais" class="btn-hero-adotar">ADOTAR</a>
+            </div>
+            <div class="hero-image-wrapper">
+                <div class="circle-bg">
+                    <img src="assets/branding/hero-pets.png" alt="Pets">
+                </div>
+            </div>
+        </section>
+
+        <section id="eventos" class="container section-padding">
+            <h2 class="section-title">Eventos e Anúncios</h2>
+            <div class="mural-slider-container">
+                <div class="mural-grid" id="grid-mural"></div>
+                <button class="slider-btn slider-btn-left" id="slider-left" style="display: none;">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="slider-btn slider-btn-right" id="slider-right" style="display: none;">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <div id="modal-evento" class="modal-container">
+            <div class="modal-content">
+                </div>
+        </div>
+
+        <section id="animais" class="container section-padding">
+            <div class="category-header">
+                <h2>Cachorros</h2>
+                <a href="catalogo.html?especie=Cachorro" class="view-more">Ver todos os pets →</a>
+            </div>
+            <div class="pet-grid" id="grid-cachorros"></div>
+            
+            <div class="category-header" style="margin-top:40px;">
+                <h2>Gatos</h2>
+                <a href="catalogo.html?especie=Gato" class="view-more">Ver todos os pets →</a>
+            </div>
+            <div class="pet-grid" id="grid-gatos"></div>
+        </section>
+    </main>
+
+    <div id="modal-pet" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            
+            <div class="modal-header-image">
+                <img src="" alt="modal-img">
+            </div>
+            
+            <div class="modal-body">
+                <h2 class="pet-name">Manin</h2>
+                <div class="pet-meta">Cachorro • Macho • Adulto</div>
+                
+                <div class="pet-description">
+                    <p>Manin é um doguinho super dócil e energético...</p> 
+                    </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-adotar-final">
+                        <span>Quero Adotar</span>
+                        <i class="fas fa-paw"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox-pet" class="lightbox">
+        <button class="close-lightbox">&times;</button>
+        <img src="" alt="Foto em tamanho real" class="lightbox-img">
+    </div>
+
+    <section class="adoption-info">
+        <div class="container">
+            <div class="info-header">
+                <h2>Nosso Compromisso: Adoção com Responsabilidade</h2>
+                <p>Garantimos que cada pet chegue à sua nova família com a saúde protegida e o futuro planejado.</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="icon-box">🩺</div>
+                    <h3>Saúde em Dia</h3>
+                    <p>Todos os nossos animais são entregues vacinados e vermifugados. Nosso protocolo garante uma vida em família com imunidade protegida.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="icon-box">✂️</div>
+                    <h3>Castração Garantida</h3>
+                    <p>Pets adultos saem castrados. Para filhotes, garantimos a castração agendada e gratuita assim que atingirem a idade ideal.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="icon-box">🛡️</div>
+                    <h3>Trabalho Transparente</h3>
+                    <p>A Patudos da Rua vive de doações. Ao adotar, você apoia uma corrente de resgate que valoriza o bem-estar animal acima de tudo.</p>
+                </div>
+            </div>
+
+            <div class="info-footer">
+                <p>“A adoção transforma vidas, mas a responsabilidade sustenta esse amor.”</p>
+            </div>
+        </div>
+    </section>
+
+<div id="footer-placeholder"></div>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
