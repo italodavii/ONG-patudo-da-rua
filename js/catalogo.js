@@ -1,8 +1,4 @@
-import { db } from './firebase-config.js';
-import { 
-    collection, getDocs, query, where, orderBy, 
-    limit, startAfter, endBefore, limitToLast, getCountFromServer 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { DataService } from '../service/data-service.js';
 import { criarCardPetHTML, configurarModal, configurarLightbox, reveal } from './utils.js';
 
 // --- Variáveis de Controle ---
@@ -36,16 +32,18 @@ function atualizarTextoExibindo() {
  */
 async function atualizarTotalPaginas() {
     try {
-        let collConstraints = [collection(db, "pets"), where("status", "==", "disponivel")];
+        const filtros = [{ campo: "status", operador: "==", valor: "disponivel" }];
 
-        if (filtroEspecie !== "todos") collConstraints.push(where("especie", "==", filtroEspecie));
-        if (filtroGenero !== "todos") collConstraints.push(where("genero", "==", filtroGenero));
-        if (filtroIdade !== "todos") collConstraints.push(where("idade", "==", filtroIdade));
+        if (filtroEspecie !== "todos") filtros.push({ campo: "especie", operador: "==", valor: filtroEspecie });
+        if (filtroGenero !== "todos") filtros.push({ campo: "genero", operador: "==", valor: filtroGenero });
+        if (filtroIdade !== "todos") filtros.push({ campo: "idade", operador: "==", valor: filtroIdade });
 
-        const snapshot = await getCountFromServer(query(...collConstraints));
-        totalPaginas = Math.ceil(snapshot.data().count / LIMITE) || 1;
+        const total = await DataService.contar("pets", filtros);
+        totalPaginas = Math.ceil(total / LIMITE) || 1;
+
     } catch (e) {
         console.error("Erro na contagem:", e);
+        console.error("Stack trace:", e.stack);
         totalPaginas = 1;
     }
 }
@@ -55,40 +53,48 @@ async function atualizarTotalPaginas() {
  */
 async function filtrarPets(direcao = 'inicial') {
     const grid = document.getElementById('grid-pets');
-    const loader = document.getElementById('catalog-loader'); 
+    const loader = document.getElementById('catalog-loader');
     if (!grid || !loader) return;
 
     if (direcao === 'inicial') {
         ultimoDoc = null; primeiroDoc = null; paginaAtual = 1;
-        await atualizarTotalPaginas(); 
+        await atualizarTotalPaginas();
     }
 
     loader.style.display = 'flex';
-    grid.style.display = 'none'; 
+    grid.style.display = 'none';
 
-    try { 
-        let restricoes = [collection(db, "pets"), where("status", "==", "disponivel")];
-        
-        if (filtroEspecie !== "todos") restricoes.push(where("especie", "==", filtroEspecie));
-        if (filtroGenero !== "todos") restricoes.push(where("genero", "==", filtroGenero));
-        if (filtroIdade !== "todos") restricoes.push(where("idade", "==", filtroIdade));
+    try {
+        const filtros = [{ campo: "status", operador: "==", valor: "disponivel" }];
 
-        restricoes.push(orderBy("criadoEm", ordemAtual));
+        if (filtroEspecie !== "todos") filtros.push({ campo: "especie", operador: "==", valor: filtroEspecie });
+        if (filtroGenero !== "todos") filtros.push({ campo: "genero", operador: "==", valor: filtroGenero });
+        if (filtroIdade !== "todos") filtros.push({ campo: "idade", operador: "==", valor: filtroIdade });
 
-        let q;
+        const ordenacao = [{ campo: "criadoEm", direcao: ordemAtual }];
+
+        let cursor = null;
+        let direcaoPaginacao = null;
+
         if (direcao === 'proximo' && ultimoDoc) {
-            q = query(...restricoes, startAfter(ultimoDoc), limit(LIMITE));
+            cursor = ultimoDoc;
+            direcaoPaginacao = 'proximo';
         } else if (direcao === 'anterior' && primeiroDoc) {
-            q = query(...restricoes, endBefore(primeiroDoc), limitToLast(LIMITE));
-        } else {
-            q = query(...restricoes, limit(LIMITE));
+            cursor = primeiroDoc;
+            direcaoPaginacao = 'anterior';
         }
 
-        const snapshot = await getDocs(q);
+        const resultado = await DataService.buscarComPaginacao("pets", {
+            filtros,
+            ordenacao,
+            limite: LIMITE,
+            cursor,
+            direcao: direcaoPaginacao
+        });
 
-        if (snapshot.empty) {
-            loader.style.display = 'none'; 
-            grid.style.display = 'block';  
+        if (resultado.vazio) {
+            loader.style.display = 'none';
+            grid.style.display = 'block';
             grid.innerHTML = `
                 <div class="sem-resultados" style="text-align: center; padding: 50px;">
                     <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
@@ -98,30 +104,29 @@ async function filtrarPets(direcao = 'inicial') {
             return;
         }
 
-        const docs = snapshot.docs;
-        primeiroDoc = docs[0];
-        ultimoDoc = docs[docs.length - 1];
+        primeiroDoc = resultado.primeiroDoc;
+        ultimoDoc = resultado.ultimoDoc;
 
         if (direcao === 'proximo') paginaAtual++;
         if (direcao === 'anterior') paginaAtual--;
 
         grid.innerHTML = "";
-        docs.forEach(doc => {
-            grid.insertAdjacentHTML('beforeend', criarCardPetHTML(doc.data(), doc.id));
+        resultado.documentos.forEach(pet => {
+            grid.insertAdjacentHTML('beforeend', criarCardPetHTML(pet, pet.id));
         });
 
         loader.style.display = 'none';
-        grid.style.display = 'grid'; 
+        grid.style.display = 'grid';
 
         atualizarInterfacePaginacao();
-        
+
         setTimeout(() => {
             reveal();
-            configurarModal(); 
+            configurarModal();
         }, 100);
-        
-    } catch (e) { 
-        console.error("Erro na busca:", e); 
+
+    } catch (e) {
+        console.error("Erro na busca:", e);
         loader.style.display = 'none';
         grid.style.display = 'block';
         grid.innerHTML = '<p>Erro ao carregar dados.</p>';
@@ -256,8 +261,8 @@ if (btnAplicarMobile) {
 
     // Fechar ao clicar fora (Mobile)
     document.addEventListener('click', (e) => {
-        if (sidebarFiltros?.classList.contains('active') && !sidebarFiltros.contains(e.target) && e.target !== btnOpenFilters) {
-            sidebarFiltros.classList.remove('active');
+        if (sidebar?.classList.contains('active') && !sidebar.contains(e.target) && e.target !== btnOpenFilters) {
+            sidebar.classList.remove('active');
         }
     });
 

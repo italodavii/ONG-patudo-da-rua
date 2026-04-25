@@ -1,5 +1,4 @@
-import { db } from './firebase-config.js';
-import { collection, query, where, onSnapshot, orderBy, doc, getDoc, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { DataService } from '../service/data-service.js';
 import { criarCardPetHTML, criarCardMuralHTML, criarConteudoEventoHTML, configurarModal, configurarLightbox, reveal } from './utils.js';
 
 function carregarMural() {
@@ -153,17 +152,13 @@ function carregarMural() {
         </div>
     `;
     const hoje = new Date().toISOString().split('T')[0];
-    const q = query(
-        collection(db, "banners"), 
-        where("dataISO", ">=", hoje),
-        orderBy("dataISO", "asc"), 
-        limit(5));
 
-    onSnapshot(q, (snapshot) => {
-        gridMural.innerHTML = ""; 
-        
-        if (snapshot.empty) {
-            gridMural.style.display = 'none'; 
+    // Usando DataService para escutar mudanças em tempo real
+    const unsubscribe = DataService.escutarColecao("banners", (eventos) => {
+        gridMural.innerHTML = "";
+
+        if (eventos.length === 0) {
+            gridMural.style.display = 'none';
             sliderLeft.style.display = 'none';
             sliderRight.style.display = 'none';
             sliderContainer.classList.remove('show-shadow-left', 'show-shadow-right');
@@ -171,21 +166,23 @@ function carregarMural() {
         }
 
         gridMural.style.display = 'flex'; // Muda para flex para o slider
-        totalEvents = snapshot.size;
+        totalEvents = eventos.length;
         currentIndex = 0; // Reset index
 
-        snapshot.forEach((doc) => {
-            const dados = doc.data();
-            
+        eventos.forEach((evento) => {
             // Geramos o HTML usando a fábrica do utils.js
             // Passamos o ID e os Dados para a função
-            const cardHTML = criarCardMuralHTML(doc.id, dados);
-            
+            const cardHTML = criarCardMuralHTML(evento.id, evento);
+
             gridMural.insertAdjacentHTML('beforeend', cardHTML);
         });
 
         updateButtonsVisibility();
         setTimeout(reveal, 200);
+    }, {
+        filtros: [{ campo: "dataISO", operador: ">=", valor: hoje }],
+        ordenacao: [{ campo: "dataISO", direcao: "asc" }],
+        limite: 5
     });
 }
 
@@ -201,26 +198,25 @@ function carregarPetsPorEspecie(especieBusca, containerId) {
         </div>
     `;
 
-    const q = query(
-        collection(db, "pets"),
-        where("status", "==", "disponivel"),
-        where("especie", "==", especieBusca), 
-        orderBy("criadoEm", "desc"),
-        limit(3)
-    );
-
-    onSnapshot(q, (snapshot) => {
+    // Usando DataService para escutar pets por espécie
+    const unsubscribe = DataService.escutarColecao("pets", (pets) => {
         grid.innerHTML = "";
-        if (snapshot.empty) {
+        if (pets.length === 0) {
             grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #999;">Nenhum ${especieBusca.toLowerCase()} para adoção no momento.</p>`;
             return;
         }
-        snapshot.forEach((doc) => {
-            const pet = doc.data();
-            const cardHTML = criarCardPetHTML(pet, doc.id);
+        pets.forEach((pet) => {
+            const cardHTML = criarCardPetHTML(pet, pet.id);
             grid.insertAdjacentHTML('beforeend', cardHTML);
         });
         setTimeout(reveal, 200);
+    }, {
+        filtros: [
+            { campo: "status", operador: "==", valor: "disponivel" },
+            { campo: "especie", operador: "==", valor: especieBusca }
+        ],
+        ordenacao: [{ campo: "criadoEm", direcao: "desc" }],
+        limite: 3
     });
 }
 
@@ -237,21 +233,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Função para animar e funcionar os contadores de estatísticas
 async function carregarEstatisticas() {
-    const docRef = doc(db, "estatisticas", "geral");
-
-    // onSnapshot faz a Home "ouvir" o banco em tempo real
-    onSnapshot(docRef, (docSnap) => {
-        if (docSnap.exists()) {
-            const dados = docSnap.data();
+    // Usando DataService para escutar documento específico
+    const unsubscribe = DataService.escutarDocumento("estatisticas", "geral", (dados) => {
+        if (dados) {
             document.querySelectorAll('.counter').forEach(el => {
                 const target = el.getAttribute('data-target');
                 const valorFinal = dados[target] || 0;
-                
+
                 // Animação
                 let start = 0;
                 const duration = 2000;
                 const step = (valorFinal / (duration / 16));
-                
+
                 const animate = () => {
                     start += step;
                     if (start < valorFinal) {
@@ -322,12 +315,10 @@ window.abrirModalEvento = async (id) => {
     const containerInner = modal.querySelector('.modal-content');
 
     try {
-        const docRef = doc(db, "banners", id);
-        const docSnap = await getDoc(docRef);
+        // Usando DataService para buscar documento por ID
+        const dados = await DataService.buscarPorId("banners", id);
 
-        if (docSnap.exists()) {
-            const dados = docSnap.data();
-            
+        if (dados) {
             // Injetamos o botão E o conteúdo do utils.js
             containerInner.innerHTML = `
                 <button class="btn-fechar-modal" onclick="fecharModalEvento()">×</button>
@@ -336,7 +327,7 @@ window.abrirModalEvento = async (id) => {
 
             // Forçamos o display flex para centralizar
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; 
+            document.body.style.overflow = 'hidden';
         }
     } catch (error) {
         console.error("Erro ao carregar evento:", error);

@@ -1,7 +1,22 @@
-import { db, auth, CLOUDINARY_CONFIG, URL_LOGO_PADRAO } from './firebase-config.js';
+import { auth, CLOUDINARY_CONFIG, URL_LOGO_PADRAO } from './firebase-config.js';
+import { DataService } from '../service/data-service.js';
 import { verificarAutenticacao, realizarLogout } from './auth.js';
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, writeBatch, increment, getCountFromServer, getDoc, getDocs, where, serverTimestamp, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+async function carregarListaPets() {
+    try {
+        // Usando o novo DataService - abstração completa do Firebase
+        const pets = await DataService.buscarTodos("pets", {
+            ordenacao: [{ campo: "criadoEm", direcao: "desc" }]
+        });
+        
+        // renderiza os pets na tela...
+        // Exemplo: pets.forEach(pet => { /* lógica de renderização */ });
+        console.log("Pets carregados:", pets);
+    } catch (error) {
+        console.error("Erro ao carregar lista de pets:", error);
+    }
+}
 
 // 1. Segurança e Logout
 verificarAutenticacao();
@@ -328,14 +343,13 @@ const tabelaPets = document.getElementById('lista-pets-admin');
 // Painel de Pets Ativos
 function iniciarEscutaPetsAdmin() {
     if (!tabelaPets) return;
-    const q = query(collection(db, "pets"), orderBy("criadoEm", "desc"));
-    
-    onSnapshot(q, (snapshot) => {
+
+    // Usando DataService para escutar mudanças em tempo real nos pets
+    const unsubscribe = DataService.escutarColecao("pets", (pets) => {
         tabelaPets.innerHTML = "";
-        snapshot.forEach((docSnap) => { 
-            const pet = docSnap.data();
-            const id = docSnap.id;
-            
+        pets.forEach((pet) => {
+            const id = pet.id;
+
             // Definir o status visual
             const isAdotado = pet.status === 'adotado';
             const statusLabel = isAdotado ? 'Adotado' : 'Disponível';
@@ -343,7 +357,7 @@ function iniciarEscutaPetsAdmin() {
 
             const novaLinha = document.createElement('tr');
             novaLinha.className = 'admin-pet-row'; // Classe para o CSS
-            
+
             novaLinha.innerHTML = `
                 <td>
                     <div class="pet-info-cell">
@@ -359,14 +373,14 @@ function iniciarEscutaPetsAdmin() {
                 </td>
                 <td class="acoes-cell">
                     <div class="actions-wrapper">
-                        <button class="btn-action adotado" 
-                                onclick="confirmarAdocao('${id}')" 
+                        <button class="btn-action adotado"
+                                onclick="confirmarAdocao('${id}')"
                                 title="Marcar como Adotado"
                                 ${isAdotado ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''}>
                             <i class="fas fa-heart"></i>
                         </button>
-                        <button class="btn-action delete" 
-                                onclick="removerPetDoBanco('${id}', '${pet.nome}')" 
+                        <button class="btn-action delete"
+                                onclick="removerPetDoBanco('${id}', '${pet.nome}')"
                                 title="Excluir Registro">
                             <i class="fas fa-trash-alt"></i>
                         </button>
@@ -375,6 +389,8 @@ function iniciarEscutaPetsAdmin() {
             `;
             tabelaPets.appendChild(novaLinha);
         });
+    }, {
+        ordenacao: [{ campo: "criadoEm", direcao: "desc" }]
     });
 }
 iniciarEscutaPetsAdmin();
@@ -391,24 +407,31 @@ window.confirmarAdocao = (petId) => {
         icone: "🐾",
         showCancel: true,
         onConfirm: async () => {
-            const batch = writeBatch(db);
-            const petRef = doc(db, "pets", petId);
-            const estatisticasRef = doc(db, "estatisticas", "geral");
-
-            const estatisticasSnap = await getDoc(estatisticasRef);
-            if (!estatisticasSnap.exists()) {
-                await setDoc(estatisticasRef, { disponiveis: 0, totalAdotados: 0, adotadosMes: 0 });
-            }
-
-            batch.delete(petRef);
-            batch.update(estatisticasRef, {
-                totalAdotados: increment(1),
-                adotadosMes: increment(1),
-                disponiveis: increment(-1)
-            });
-
             try {
-                await batch.commit();
+                // Usando DataService para transação
+                await DataService.executarTransacao(async (batch, { doc, increment }) => {
+                    const petRef = doc(db, "pets", petId);
+                    const estatisticasRef = doc(db, "estatisticas", "geral");
+
+                    // Verificar se estatísticas existem
+                    const estatisticas = await DataService.buscarPorId("estatisticas", "geral");
+                    if (!estatisticas) {
+                        await DataService.criar("estatisticas", { 
+                            id: "geral", 
+                            disponiveis: 0, 
+                            totalAdotados: 0, 
+                            adotadosMes: 0 
+                        });
+                    }
+
+                    batch.delete(petRef);
+                    batch.update(estatisticasRef, {
+                        totalAdotados: increment(1),
+                        adotadosMes: increment(1),
+                        disponiveis: increment(-1)
+                    });
+                });
+
                 // Aviso de sucesso também personalizado
                 window.mostrarAviso({ 
                     titulo: "Parabéns!", 
@@ -473,25 +496,28 @@ formPet?.addEventListener('submit', async function(e) {
             idade: document.getElementById('pet-idade').value,
             descricao: document.getElementById('pet-desc').value,
             status: "disponivel",
-            fotoUrl: urlCloudinary,
-            criadoEm: serverTimestamp()
+            fotoUrl: urlCloudinary
         };
 
-        // 3. Gravação no Firestore
-        await addDoc(collection(db, "pets"), petData);
+        // 3. Gravação no Firestore usando DataService
+        await DataService.criar("pets", petData);
 
-        // 1. Atualiza o contador de pets disponíveis que a Home lê
-        const estatisticasRef = doc(db, "estatisticas", "geral");
-        const estatisticasSnap = await getDoc(estatisticasRef);
-        if (estatisticasSnap.exists()) {
-            await updateDoc(estatisticasRef, {
-                disponiveis: increment(1)
+        // 4. Atualiza o contador de pets disponíveis usando DataService
+        const estatisticas = await DataService.buscarPorId("estatisticas", "geral");
+        if (estatisticas) {
+            await DataService.atualizar("estatisticas", "geral", {
+                disponiveis: (estatisticas.disponiveis || 0) + 1
             });
         } else {
-            await setDoc(estatisticasRef, { disponiveis: 1, totalAdotados: 0, adotadosMes: 0 });
+            await DataService.criar("estatisticas", {
+                id: "geral",
+                disponiveis: 1,
+                totalAdotados: 0,
+                adotadosMes: 0
+            });
         }
 
-        // 2. Chama a função que atualiza os números na tela do admin (aquela que anima os números)
+        // 5. Chama a função que atualiza os números na tela do admin
         if (typeof carregarEstatisticasAdmin === "function") {
             carregarEstatisticasAdmin();
         }
@@ -572,27 +598,25 @@ async function iniciarEscutaMural() {
         hojeLimpeza.setDate(hojeLimpeza.getDate() - DIAS_DE_RETENCAO);
         const dataCorteISO = hojeLimpeza.toISOString().split('T')[0];
 
-        const qLimpeza = query(collection(db, "banners"), where("dataISO", "<", dataCorteISO));
-        const snapLimpeza = await getDocs(qLimpeza);
+        // Buscar banners antigos usando DataService
+        const bannersAntigos = await DataService.buscarComFiltro("banners", "dataISO", "<", dataCorteISO);
 
-        if (!snapLimpeza.empty) {
-            const batch = writeBatch(db);
-            snapLimpeza.forEach((docSnap) => {
-                batch.delete(docSnap.ref);
-            });
-            await batch.commit();
-            console.log(`Auto-Cleanup: ${snapLimpeza.size} eventos antigos removidos.`);
+        if (bannersAntigos.length > 0) {
+            // Deletar cada banner antigo
+            for (const banner of bannersAntigos) {
+                await DataService.deletar("banners", banner.id);
+            }
+            console.log(`Auto-Cleanup: ${bannersAntigos.length} eventos antigos removidos.`);
         }
     } catch (error) {
         console.error("Erro na limpeza automática:", error);
     }
 
-    const q = query(collection(db, "banners"), orderBy("dataISO", "desc"));
-    
-    onSnapshot(q, (snapshot) => {
-        containerGrid.innerHTML = ""; 
-        
-        if (snapshot.empty) {
+    // Usando DataService para escutar mudanças no mural
+    const unsubscribe = DataService.escutarColecao("banners", (banners) => {
+        containerGrid.innerHTML = "";
+
+        if (banners.length === 0) {
             containerGrid.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-image"></i>
@@ -601,14 +625,13 @@ async function iniciarEscutaMural() {
             return;
         }
 
-        snapshot.forEach((doc) => {
-            const banner = doc.data();
+        banners.forEach((banner) => {
             const hoje = new Intl.DateTimeFormat('fr-CA').format(new Date());
-            
+
             const estaExpirado = banner.dataISO < hoje;
-            
+
             const statusTexto = estaExpirado ? "Inativo (Encerrado)" : "Ativo no Site";
-            const statusCor = estaExpirado ? "#e74c3c" : "#2ecc71"; 
+            const statusCor = estaExpirado ? "#e74c3c" : "#2ecc71";
 
             const novoCard = document.createElement('div');
             novoCard.className = 'admin-banner-card';
@@ -622,13 +645,15 @@ async function iniciarEscutaMural() {
                         <h4>${banner.titulo}</h4>
                         <p>Data do Evento: ${banner.dataISO.split('-').reverse().join('/')}</p>
                     </div>
-                    <button type="button" class="btn-delete-minimal" onclick="removerBannerDoBanco('${doc.id}')" title="Excluir Evento">
+                    <button type="button" class="btn-delete-minimal" onclick="removerBannerDoBanco('${banner.id}')" title="Excluir Evento">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             `;
             containerGrid.appendChild(novoCard);
         });
+    }, {
+        ordenacao: [{ campo: "dataISO", direcao: "desc" }]
     });
 }
 iniciarEscutaMural();
@@ -677,8 +702,8 @@ formMural?.addEventListener('submit', async function(e) {
             console.log("Usando logo padrão (Nenhuma arte selecionada).");
         }
 
-        // --- GRAVAÇÃO NO FIRESTORE ---
-        await addDoc(collection(db, "banners"), {
+        // --- GRAVAÇÃO NO FIRESTORE usando DataService ---
+        await DataService.criar("banners", {
             titulo: document.getElementById('mural-titulo').value,
             dataISO: document.getElementById('mural-data').value,
             hora: document.getElementById('mural-hora').value,
@@ -821,12 +846,10 @@ loginForm?.addEventListener('submit', (e) => {
 
 async function carregarEstatisticasAdmin() {
     try {
-        // 1. Busca Pets Ativos e Adotados (Documento Geral)
-        const docRef = doc(db, "estatisticas", "geral");
-        const docSnap = await getDoc(docRef);
+        // 1. Busca Pets Ativos e Adotados (Documento Geral) usando DataService
+        const dados = await DataService.buscarPorId("estatisticas", "geral");
 
-        if (docSnap.exists()) {
-            const dados = docSnap.data();
+        if (dados) {
             document.querySelectorAll('.counter').forEach(el => {
                 const target = el.getAttribute('data-target');
                 const valorFinal = dados[target] || 0;
@@ -834,14 +857,15 @@ async function carregarEstatisticasAdmin() {
             });
         }
 
-        // 2. Busca Eventos Ativos (Contagem real na coleção banners)
+        // 2. Busca Eventos Ativos (Contagem real na coleção banners) usando DataService
         const hojeISO = new Intl.DateTimeFormat('fr-CA').format(new Date());
-        const qEventos = query(collection(db, "banners"), where("dataISO", ">=", hojeISO));
-        const snapEventos = await getCountFromServer(qEventos);
+        const eventosAtivos = await DataService.contar("banners", [
+            { campo: "dataISO", operador: ">=", valor: hojeISO }
+        ]);
         const elEventos = document.getElementById('count-eventos');
-        
+
         if (elEventos) {
-            animarAdmin(elEventos, snapEventos.data().count);
+            animarAdmin(elEventos, eventosAtivos);
         }
     } catch (error) {
         console.error("Erro ao carregar dashboard:", error);
