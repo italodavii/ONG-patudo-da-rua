@@ -6,7 +6,7 @@ import {
     persistentMultipleTabManager 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Credenciais de Exemplo - Substitua pelas suas no arquivo real
+// Credenciais de Exemplo - Substitua pelas suas no arquivo real.
 const firebaseConfig = {
   apiKey: "SUA_API_KEY_AQUI",
   authDomain: "SEU_PROJETO.firebaseapp.com",
